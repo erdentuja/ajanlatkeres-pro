@@ -5,16 +5,17 @@ Description: Ajánlatkérő űrlap – szép admin UI + HTML email. Használat: 
 Version: 1.23
 Author: András
 */
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH'))
+    exit;
 
 global $wpdb;
-$table = $wpdb->prefix.'ajanlatkeres';
+$table = $wpdb->prefix . 'ajanlatkeres';
 
 /**
  * Adatbázis tábla létrehozása aktiváláskor
  */
-register_activation_hook(__FILE__, function() use ($wpdb,$table){
-    require_once(ABSPATH.'wp-admin/includes/upgrade.php');
+register_activation_hook(__FILE__, function () use ($wpdb, $table) {
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     $sql = "CREATE TABLE $table (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255),
@@ -31,7 +32,7 @@ register_activation_hook(__FILE__, function() use ($wpdb,$table){
         created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) {$wpdb->get_charset_collate()};";
     dbDelta($sql);
-    if(!get_option('ak_admin_emails')){
+    if (!get_option('ak_admin_emails')) {
         update_option('ak_admin_emails', get_option('admin_email'));
     }
 });
@@ -39,44 +40,62 @@ register_activation_hook(__FILE__, function() use ($wpdb,$table){
 /**
  * Frontend stílusok és scriptek betöltése
  */
-add_action('wp_enqueue_scripts', function(){
-    wp_enqueue_style('ak-form-css', plugin_dir_url(__FILE__).'assets/css/form.css');
-    wp_enqueue_script('ak-form-js', plugin_dir_url(__FILE__).'assets/js/form.js', ['jquery'], '1.0', true);
-    
-    wp_localize_script('ak-form-js', 'akAjax', [
-        'url'          => admin_url('admin-ajax.php'),
-        'nonce'        => wp_create_nonce('ak_submit_nonce'),
-        'admin_nonce'  => wp_create_nonce('ak_admin_nonce'),
-        'status_nonce' => wp_create_nonce('ak_status_nonce')
-    ]);
+add_action('wp_enqueue_scripts', function () {
+    wp_enqueue_style('ak-form-css', plugin_dir_url(__FILE__) . 'assets/css/form.css');
+    wp_enqueue_script('ak-form-js', plugin_dir_url(__FILE__) . 'assets/js/form.js', ['jquery'], '1.0', true);
+
+    $script_data = [
+        'url' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('ak_submit_nonce')
+    ];
+
+    // Csak adminisztrátoroknak adjuk át az admin nonce-okat
+    if (current_user_can('manage_options')) {
+        $script_data['admin_nonce'] = wp_create_nonce('ak_admin_nonce');
+        $script_data['status_nonce'] = wp_create_nonce('ak_status_nonce');
+    }
+
+    wp_localize_script('ak-form-js', 'akAjax', $script_data);
 });
 
 /**
  * Admin stílusok betöltése
  */
-add_action('admin_enqueue_scripts', function(){
-    wp_enqueue_style('ak-admin-css', plugin_dir_url(__FILE__).'admin/css/admin.css');
+add_action('admin_enqueue_scripts', function () {
+    wp_enqueue_style('ak-admin-css', plugin_dir_url(__FILE__) . 'admin/css/admin.css');
+    wp_enqueue_script('ak-admin-js', plugin_dir_url(__FILE__) . 'admin/js/admin.js', ['jquery'], '1.0', true);
+    wp_localize_script('ak-admin-js', 'akAdminAjax', [
+        'nonce' => wp_create_nonce('ak_status_nonce')
+    ]);
 });
 
 // Admin felületek behúzása
-require_once plugin_dir_path(__FILE__).'admin/admin-list.php';
-require_once plugin_dir_path(__FILE__).'admin/admin-settings.php';
+require_once plugin_dir_path(__FILE__) . 'admin/admin-list.php';
+require_once plugin_dir_path(__FILE__) . 'admin/admin-settings.php';
 
 /**
  * Piktogram meghatározása
  */
-function ak_get_pkg_icon($pkg) {
+function ak_get_pkg_icon($pkg)
+{
     $p = mb_strtolower($pkg);
-    if (strpos($p, 'esküvő') !== false || strpos($p, 'wedding') !== false) return '💍';
-    if (strpos($p, 'lovaglás') !== false) return '🐎';
-    if (strpos($p, 'fittnesz') !== false || strpos($p, 'fitness') !== false) return '🏋️';
-    if (strpos($p, 'gerecse') !== false || strpos($p, 'pihenés') !== false) return '🌳';
-    if (strpos($p, 'romantikus') !== false || strpos($p, 'romantika') !== false) return '❤️';
-    if (strpos($p, 'napfénnyel') !== false || strpos($p, 'napsütés') !== false) return '☀️';
+    if (strpos($p, 'esküvő') !== false || strpos($p, 'wedding') !== false)
+        return '💍';
+    if (strpos($p, 'lovaglás') !== false)
+        return '🐎';
+    if (strpos($p, 'fittnesz') !== false || strpos($p, 'fitness') !== false)
+        return '🏋️';
+    if (strpos($p, 'gerecse') !== false || strpos($p, 'pihenés') !== false)
+        return '🌳';
+    if (strpos($p, 'romantikus') !== false || strpos($p, 'romantika') !== false)
+        return '❤️';
+    if (strpos($p, 'napfénnyel') !== false || strpos($p, 'napsütés') !== false)
+        return '☀️';
     return '📦';
 }
 
-function ak_get_admin_emails(){
+function ak_get_admin_emails()
+{
     $opt = get_option('ak_admin_emails');
     return $opt ? array_map('trim', explode(',', $opt)) : [get_option('admin_email')];
 }
@@ -85,10 +104,13 @@ function ak_get_admin_emails(){
  * SHORTCODE 1: Ajánlatkérő űrlap [ajanlatkeres]
  */
 add_shortcode('ajanlatkeres', 'ak_shortcode_form');
-function ak_shortcode_form($atts){
+function ak_shortcode_form($atts)
+{
     ob_start();
     $today = date('Y-m-d');
-    $n1 = rand(1, 9); $n2 = rand(1, 7); $sum = $n1 + $n2;
+    $n1 = rand(1, 9);
+    $n2 = rand(1, 7);
+    $sum = $n1 + $n2;
     $captcha_token = md5($sum . 'ak_salt');
     ?>
     <div class="ak-wrapper">
@@ -97,16 +119,29 @@ function ak_shortcode_form($atts){
             <label>Az Ön Neve *</label>
             <input type="text" name="name" required placeholder="Adja meg teljes nevét">
             <div class="ak-row">
-                <div class="ak-field-group"><label>E-mail *</label><input type="email" name="email" required placeholder="pelda@email.hu"></div>
+                <div class="ak-field-group"><label>E-mail *</label><input type="email" name="email" required
+                        placeholder="pelda@email.hu"></div>
                 <div class="ak-field-group"><label>Telefon</label><input type="tel" name="phone" placeholder="+36..."></div>
             </div>
             <label>Érkezés Várható Dátuma *</label>
             <input type="date" name="arrival" min="<?php echo $today; ?>" required>
             <div class="ak-row">
-                <div class="ak-mini"><label>Szobák száma</label><div class="ak-counter"><button type="button" class="minus">-</button><input type="text" name="rooms" value="1" readonly><button type="button" class="plus">+</button></div></div>
-                <div class="ak-mini"><label>Éjszakák száma</label><div class="ak-counter"><button type="button" class="minus">-</button><input type="text" name="nights" value="2" readonly><button type="button" class="plus">+</button></div></div>
-                <div class="ak-mini"><label>Felnőtt</label><div class="ak-counter"><button type="button" class="minus">-</button><input type="text" name="adults" value="2" readonly><button type="button" class="plus">+</button></div></div>
-                <div class="ak-mini"><label>Gyermek</label><div class="ak-counter"><button type="button" class="minus">-</button><input type="text" name="children" value="0" readonly><button type="button" class="plus">+</button></div></div>
+                <div class="ak-mini"><label>Szobák száma</label>
+                    <div class="ak-counter"><button type="button" class="minus">-</button><input type="text" name="rooms"
+                            value="1" readonly><button type="button" class="plus">+</button></div>
+                </div>
+                <div class="ak-mini"><label>Éjszakák száma</label>
+                    <div class="ak-counter"><button type="button" class="minus">-</button><input type="text" name="nights"
+                            value="2" readonly><button type="button" class="plus">+</button></div>
+                </div>
+                <div class="ak-mini"><label>Felnőtt</label>
+                    <div class="ak-counter"><button type="button" class="minus">-</button><input type="text" name="adults"
+                            value="2" readonly><button type="button" class="plus">+</button></div>
+                </div>
+                <div class="ak-mini"><label>Gyermek</label>
+                    <div class="ak-counter"><button type="button" class="minus">-</button><input type="text" name="children"
+                            value="0" readonly><button type="button" class="plus">+</button></div>
+                </div>
             </div>
             <label>Választott Csomagajánlat</label>
             <select name="package">
@@ -137,17 +172,21 @@ function ak_shortcode_form($atts){
  * SHORTCODE 2: Frontend Admin Lista [ajanlat_lista]
  */
 add_shortcode('ajanlat_lista', 'ak_shortcode_admin_list');
-function ak_shortcode_admin_list($atts){
+function ak_shortcode_admin_list($atts)
+{
     $code = isset($_POST['ak_code']) ? $_POST['ak_code'] : (isset($_GET['access']) ? $_GET['access'] : '');
-    
+
     if ($code !== 'Ph-159753') {
         ob_start();
         ?>
         <div class="ak-wrapper">
             <div class="ak-card" style="text-align:center; padding: 60px 40px;">
-                <h3 style="margin-top:0; color:#8b5e3c; font-family:Georgia, serif; text-transform:uppercase; letter-spacing:2px;">Admin Belépés</h3>
+                <h3
+                    style="margin-top:0; color:#8b5e3c; font-family:Georgia, serif; text-transform:uppercase; letter-spacing:2px;">
+                    Admin Belépés</h3>
                 <form method="post" style="max-width:300px; margin:0 auto">
-                    <input type="password" name="ak_code" placeholder="Kód..." style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #d6c9bb; text-align:center">
+                    <input type="password" name="ak_code" placeholder="Kód..."
+                        style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #d6c9bb; text-align:center">
                     <button type="submit" class="ak-submit" style="margin:0">Belépés</button>
                 </form>
             </div>
@@ -175,35 +214,39 @@ function ak_shortcode_admin_list($atts){
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach($rows as $r): ?>
-                        <tr id="ak-row-<?php echo $r->id; ?>">
-                            <td style="font-size:11px; color:#999"><?php echo date('m.d H:i', strtotime($r->created)); ?></td>
-                            <td>
-                                <strong><?php echo esc_html($r->name); ?></strong><br>
-                                <small style="color:#888;"><?php echo esc_html($r->email); ?></small>
-                            </td>
-                            <td>
-                                <div style="display:flex; align-items:center; gap:8px;">
-                                    <span style="font-size:24px;"><?php echo ak_get_pkg_icon($r->package); ?></span>
-                                    <span style="font-size:13px; color:#444;"><?php echo esc_html($r->package); ?></span>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="status-wrapper">
-                                    <label class="ak-switch">
-                                        <input type="checkbox" class="ak-fe-toggle" data-id="<?php echo $r->id; ?>" <?php checked($r->status, 'feldolgozva'); ?>>
-                                        <span class="ak-slider"></span>
-                                    </label>
-                                    <span class="ak-status-label <?php echo $r->status === 'feldolgozva' ? 'status-label-feldolgozva' : 'status-label-uj'; ?>">
-                                        <?php echo ($r->status === 'feldolgozva' ? 'Feldolgozva' : 'Új'); ?>
-                                    </span>
-                                </div>
-                            </td>
-                            <td style="text-align:right; white-space:nowrap;">
-                                <a href="<?php echo admin_url('admin.php?page=ajanlatok&edit='.$r->id); ?>" class="ak-icon-btn" title="Szerkesztés">✏️</a>
-                                <button class="ak-fe-delete ak-icon-btn" data-id="<?php echo $r->id; ?>" title="Törlés">🗑️</button>
-                            </td>
-                        </tr>
+                        <?php foreach ($rows as $r): ?>
+                            <tr id="ak-row-<?php echo $r->id; ?>">
+                                <td style="font-size:11px; color:#999"><?php echo date('m.d H:i', strtotime($r->created)); ?>
+                                </td>
+                                <td>
+                                    <strong><?php echo esc_html($r->name); ?></strong><br>
+                                    <small style="color:#888;"><?php echo esc_html($r->email); ?></small>
+                                </td>
+                                <td>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <span style="font-size:24px;"><?php echo ak_get_pkg_icon($r->package); ?></span>
+                                        <span style="font-size:13px; color:#444;"><?php echo esc_html($r->package); ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="status-wrapper">
+                                        <label class="ak-switch">
+                                            <input type="checkbox" class="ak-fe-toggle" data-id="<?php echo $r->id; ?>" <?php checked($r->status, 'feldolgozva'); ?>>
+                                            <span class="ak-slider"></span>
+                                        </label>
+                                        <span
+                                            class="ak-status-label <?php echo $r->status === 'feldolgozva' ? 'status-label-feldolgozva' : 'status-label-uj'; ?>">
+                                            <?php echo ($r->status === 'feldolgozva' ? 'Feldolgozva' : 'Új'); ?>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td style="text-align:right; white-space:nowrap;">
+                                    <a href="<?php echo admin_url('admin.php?page=ajanlatok&edit=' . $r->id); ?>"
+                                        class="ak-icon-btn" title="Szerkesztés">✏️</a>
+                                    <button class="ak-fe-delete ak-icon-btn" data-id="<?php echo $r->id; ?>"
+                                        title="Törlés">🗑️</button>
+                                </td>
+                            </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
@@ -219,7 +262,8 @@ function ak_shortcode_admin_list($atts){
  */
 add_action('wp_ajax_ajanlat_submit', 'ak_handle_submit');
 add_action('wp_ajax_nopriv_ajanlat_submit', 'ak_handle_submit');
-function ak_handle_submit(){
+function ak_handle_submit()
+{
     check_ajax_referer('ak_submit_nonce', 'nonce');
     $user_answer = isset($_POST['captcha_answer']) ? intval($_POST['captcha_answer']) : 0;
     $token = isset($_POST['captcha_token']) ? sanitize_text_field($_POST['captcha_token']) : '';
@@ -240,11 +284,13 @@ function ak_handle_submit(){
         'note' => sanitize_textarea_field($_POST['note']),
         'status' => 'uj'
     ];
-    if($wpdb->insert($wpdb->prefix.'ajanlatkeres', $data)){
+    if ($wpdb->insert($wpdb->prefix . 'ajanlatkeres', $data)) {
         $admin_emails = ak_get_admin_emails();
         $headers = ['Content-Type: text/html; charset=UTF-8'];
-        $admin_msg = file_get_contents(plugin_dir_path(__FILE__).'emails/admin.html');
-        foreach($data as $key => $value){ $admin_msg = str_replace('{{'.$key.'}}', $value, $admin_msg); }
+        $admin_msg = file_get_contents(plugin_dir_path(__FILE__) . 'emails/admin.html');
+        foreach ($data as $key => $value) {
+            $admin_msg = str_replace('{{' . $key . '}}', $value, $admin_msg);
+        }
         wp_mail($admin_emails, 'Új ajánlatkérés érkezett - ' . $data['name'], $admin_msg, $headers);
         wp_send_json_success(['message' => 'Köszönjük! Ajánlatkérését sikeresen elküldtük.']);
     } else {
@@ -256,12 +302,20 @@ function ak_handle_submit(){
  * AJAX: Státusz frissítés (Admin & FE Admin - Kijelentkezett módban is!)
  */
 add_action('wp_ajax_ak_update_status', 'ak_ajax_update_status');
-add_action('wp_ajax_nopriv_ak_update_status', 'ak_ajax_update_status');
-function ak_ajax_update_status(){
+// add_action('wp_ajax_nopriv_ak_update_status', 'ak_ajax_update_status'); // BIZTONSÁG: Nyilvános hozzáférés tiltva
+function ak_ajax_update_status()
+{
     check_ajax_referer('ak_status_nonce', 'nonce');
+
+    // BIZTONSÁGI FRISSÍTÉS: Jogosultság ellenőrzés
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'Nincs jogosultsága ehhez a művelethez.']);
+    }
+
     global $wpdb;
-    $wpdb->update($wpdb->prefix.'ajanlatkeres', 
-        ['status' => sanitize_text_field($_POST['status'])], 
+    $wpdb->update(
+        $wpdb->prefix . 'ajanlatkeres',
+        ['status' => sanitize_text_field($_POST['status'])],
         ['id' => intval($_POST['id'])]
     );
     wp_send_json_success();
@@ -271,11 +325,18 @@ function ak_ajax_update_status(){
  * AJAX: Frontend Törlés (Kijelentkezett módban is!)
  */
 add_action('wp_ajax_ak_fe_delete', 'ak_ajax_fe_delete');
-add_action('wp_ajax_nopriv_ak_fe_delete', 'ak_ajax_fe_delete');
-function ak_ajax_fe_delete(){
+// add_action('wp_ajax_nopriv_ak_fe_delete', 'ak_ajax_fe_delete'); // BIZTONSÁG: Nyilvános hozzáférés tiltva
+function ak_ajax_fe_delete()
+{
     check_ajax_referer('ak_admin_nonce', 'nonce');
+
+    // BIZTONSÁGI FRISSÍTÉS: Jogosultság ellenőrzés
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'Nincs jogosultsága ehhez a művelethez.']);
+    }
+
     global $wpdb;
-    if($wpdb->delete($wpdb->prefix.'ajanlatkeres', ['id' => intval($_POST['id'])])){
+    if ($wpdb->delete($wpdb->prefix . 'ajanlatkeres', ['id' => intval($_POST['id'])])) {
         wp_send_json_success();
     }
     wp_send_json_error();
