@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: sans-serif; /* A levelező alapértelmezett betűtípusa */
+            line-height: 1.6;
+            color: #4a3f35;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f1ee;
+        }
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            background-color: #ffffff;
+            border: 1px solid #d6c9bb;
+        }
+        .header {
+            background-color: #8b5e3c;
+            color: #ffffff;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .header h2 {
+            margin: 0;
+            font-size: 22px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: 300;
+        }
+        .content {
+            padding: 40px;
+        }
+        .section-header {
+            border-bottom: 2px solid #f7f4ef;
+            margin: 30px 0 10px 0;
+            padding-bottom: 5px;
+        }
+        .section-title {
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #8b5e3c;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td {
+            padding: 12px 0;
+            border-bottom: 1px solid #fdfaf5;
+        }
+        .label {
+            font-weight: 700;
+            width: 45%;
+            color: #6f472b;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        .value {
+            width: 55%;
+            color: #2d2d2d;
+            font-size: 15px;
+        }
+        .package-box {
+            background-color: #fdfaf5;
+            padding: 15px;
+            border: 1px solid #d6c9bb;
+            border-radius: 4px;
+            text-align: center;
+            margin: 10px 0;
+            color: #8b5e3c;
+            font-weight: 800;
+            font-size: 18px;
+        }
+        .note-box {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-left: 4px solid #8b5e3c;
+            margin-top: 10px;
+            font-style: italic;
+            color: #555;
+            line-height: 1.8;
+        }
+        .footer {
+            background-color: #4a3f35;
+            padding: 20px;
+            text-align: center;
+            font-size: 10px;
+            color: #d6c9bb;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Új Foglalási Érdeklődés</h2>
+        </div>
+        
+        <div class="content">
+            <div class="section-header">
+                <p class="section-title">👤 Vendég adatai</p>
+            </div>
+            <table>
+                <tr>
+                    <td class="label">Név:</td>
+                    <td class="value"><strong>{{name}}</strong></td>
+                </tr>
+                <tr>
+                    <td class="label">E-mail:</td>
+                    <td class="value"><a href="mailto:{{email}}" style="color: #8b5e3c;">{{email}}</a></td>
+                </tr>
+                <tr>
+                    <td class="label">Telefon:</td>
+                    <td class="value">{{phone}}</td>
+                </tr>
+            </table>
+
+            <div class="section-header">
+                <p class="section-title">📅 Foglalás részletei</p>
+            </div>
+            <table>
+                <tr>
+                    <td class="label">Érkezés napja:</td>
+                    <td class="value" style="color: #8b5e3c; font-weight: 800;">{{arrival}}</td>
+                </tr>
+                <tr>
+                    <td class="label">Éjszakák:</td>
+                    <td class="value">{{nights}} éj</td>
+                </tr>
+                <tr>
+                    <td class="label">Szobák száma:</td>
+                    <td class="value">{{rooms}} db</td>
+                </tr>
+                <tr>
+                    <td class="label">Felnőttek:</td>
+                    <td class="value">{{adults}} fő</td>
+                </tr>
+                <tr>
+                    <td class="label">Gyermekek (0-3 év):</td>
+                    <td class="value">{{children}} fő</td>
+                </tr>
+            </table>
+
+            <div class="section-header">
+                <p class="section-title">🎁 Kiválasztott csomag</p>
+            </div>
+            <div class="package-box">
+                {{package}}
+            </div>
+
+            <div class="section-header">
+                <p class="section-title">✉️ Megjegyzés</p>
+            </div>
+            <div class="note-box">
+                {{note}}
+            </div>
+        </div>
+
+        <div class="footer">
+            Ajánlatkérés Pro rendszer - Pollushof Hotel & Étterem
+        </div>
+    </div>
+</body>
+</html>

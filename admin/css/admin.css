@@ -1,0 +1,33 @@
+/* Betűkészlet öröklődik a WordPress-től */
+.ak-admin-card { 
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
+    padding: 0; margin: 20px 0; max-width: 1100px; 
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); overflow: hidden;
+    font-family: inherit;
+}
+.ak-card-header { background: linear-gradient(to right, #f8fafc, #ffffff); padding: 20px 30px; border-bottom: 1px solid #e2e8f0; }
+.ak-card-header h2 { margin: 0; font-size: 20px; color: #1e293b; }
+.ak-card-body { padding: 30px; }
+
+.ak-section-title {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #8b5e3c;
+    margin: 25px 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid #f1f5f9;
+    font-weight: 800;
+}
+
+.ak-admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.ak-admin-grid-four { grid-template-columns: repeat(4, 1fr); }
+.ak-admin-form label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px; color: #334155; }
+.ak-admin-form input, .ak-admin-form select, .ak-admin-form textarea { 
+    width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit;
+}
+
+/* Színes Státusz stílusok */
+.status-wrapper { display: flex; align-items: center; gap: 8px; }
+.ak-status-select { 
+    padding: 6px 12px; border-radius: 20px; border: 1px solid transparent; 
+    font-size: 11px; font-weight: 800; text-transform: uppercase; cursor: pointer; font-family: inherit;
+}
+.status-uj { background: #fff9db; color: #856404; border-color: #ffeeba; }
+.status-feldolgozva { background: #e3f9e5; color: #155724; border-color: #c3e6cb; }
+.save-indicator { color: #10b981; font-weight: bold; display: none; margin-left: 5px; font-size: 16px; }

@@ -1,0 +1,23 @@
+
+Ajánlatkérés Pro – CHANGELOG
+
+= 1.5 =
+- Státusz mező admin felületen (új / feldolgozva)
+- Státusz módosítás mentéssel
+- Soronkénti törlés adminban
+- Letisztultabb frontend design
+- Kisebb, címkézett számláló mezők
+- AJAX beküldés stabilizálása
+
+= 1.4 =
+- Admin lista nézet
+- CAPTCHA checkbox
+- Számláló mezők bevezetése
+
+= 1.3 =
+- Új frontend UI
+- Kártyás elrendezés
+- Pollushof színvilág
+
+= 1.0 =
+- Alap ajánlatkérő űrlap

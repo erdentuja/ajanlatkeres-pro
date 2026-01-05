@@ -1,0 +1,187 @@
+:root {
+    --ak-primary: #8b5e3c;
+    --ak-secondary: #5a3d27;
+    --ak-accent: #fdfaf5;
+    --ak-border: #d6c9bb;
+    --ak-text: #4a3f35;
+}
+
+/* Alap elrendezés */
+.ak-wrapper { 
+    display: flex; 
+    justify-content: center; 
+    padding: 20px 0; 
+    font-family: inherit; 
+}
+
+.ak-card {
+    max-width: 700px;
+    width: 100%;
+    background: #fff;
+    padding: 50px;
+    border: 1px solid var(--ak-border);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.ak-card h3 { 
+    margin-top: 0; 
+    color: var(--ak-primary); 
+    font-size: 26px; 
+    margin-bottom: 25px; 
+    text-align: center; 
+    font-weight: 300; 
+    letter-spacing: 2px; 
+    text-transform: uppercase;
+}
+
+.ak-card label { 
+    display: block; 
+    font-size: 11px; 
+    margin-top: 15px; 
+    font-weight: 800; 
+    color: var(--ak-text); 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+}
+
+.ak-card input, .ak-card select, .ak-card textarea { 
+    width: 100%; 
+    padding: 14px; 
+    border: 1px solid var(--ak-border); 
+    background: var(--ak-accent); 
+    margin-top: 5px; 
+    border-radius: 4px; 
+    box-sizing: border-box; 
+    font-family: inherit; 
+    transition: all 0.3s;
+}
+
+.ak-card input:focus { border-color: var(--ak-primary); outline: none; background: #fff; }
+
+.ak-row { display: flex; gap: 20px; flex-wrap: wrap; }
+.ak-field-group { flex: 1; min-width: 240px; }
+.ak-mini { flex: 1; min-width: 130px; }
+
+/* Számláló dobozok */
+.ak-counter { 
+    display: flex; 
+    align-items: center; 
+    border: 1px solid var(--ak-border); 
+    border-radius: 2px; 
+    margin-top: 6px; 
+    overflow: hidden; 
+    height: 50px; 
+    background: #fff; 
+}
+.ak-counter input { width: 100%; text-align: center; border: none; background: transparent; margin-top: 0; font-weight: 700; padding: 0; font-size: 16px; }
+.ak-counter button { 
+    width: 50px; 
+    height: 50px; 
+    border: none; 
+    background: var(--ak-accent); 
+    color: var(--ak-primary); 
+    cursor: pointer; 
+    font-size: 22px; 
+    transition: 0.2s; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+}
+.ak-counter button:hover { background: var(--ak-border); color: #fff; }
+
+.ak-submit { 
+    margin-top: 40px; 
+    width: 100%; 
+    padding: 20px; 
+    background: var(--ak-primary); 
+    color: #fff; 
+    border: none; 
+    cursor: pointer; 
+    font-weight: 800; 
+    text-transform: uppercase; 
+    letter-spacing: 3px; 
+    transition: all 0.4s; 
+    border-radius: 4px; 
+    font-size: 14px; 
+    box-shadow: 0 10px 20px rgba(139, 94, 60, 0.2);
+}
+.ak-submit:hover { background: var(--ak-secondary); transform: translateY(-2px); }
+
+/* --- FRONTEND ADMIN TÁBLÁZAT --- */
+.ak-fe-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+.ak-fe-table th { text-align: left; padding: 12px; background: var(--ak-accent); color: var(--ak-primary); font-size: 12px; text-transform: uppercase; border-bottom: 2px solid var(--ak-border); }
+.ak-fe-table td { padding: 15px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+
+/* --- VALÓDI KAPCSOLÓ (TOGGLE SWITCH) STÍLUS --- */
+.ak-switch { 
+    position: relative; 
+    display: inline-block; 
+    width: 46px; 
+    height: 24px; 
+    vertical-align: middle; 
+    flex-shrink: 0; 
+}
+
+.ak-switch input { opacity: 0; width: 0; height: 0; }
+
+.ak-slider { 
+    position: absolute; 
+    cursor: pointer; 
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0; 
+    background-color: #fef3c7; 
+    transition: .4s; 
+    border-radius: 34px; 
+    border: 1px solid #ffeeba; 
+}
+
+.ak-slider:before { 
+    position: absolute; 
+    content: ""; 
+    height: 16px; 
+    width: 16px; 
+    left: 4px; 
+    bottom: 3px; 
+    background-color: #856404; 
+    transition: .4s; 
+    border-radius: 50%; 
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2); 
+}
+
+input:checked + .ak-slider { background-color: #dcfce7; border-color: #c3e6cb; }
+input:checked + .ak-slider:before { transform: translateX(20px); background-color: #166534; }
+
+/* Státusz feliratok - SZÍNES HÁTTÉR, NEM BOLD */
+.status-wrapper { display: flex; align-items: center; gap: 10px; }
+.ak-status-label { 
+    font-size: 10px; 
+    text-transform: uppercase; 
+    padding: 4px 10px; 
+    border-radius: 20px; 
+    font-weight: 400; 
+    white-space: nowrap; 
+    transition: 0.3s;
+}
+.status-label-uj { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+.status-label-feldolgozva { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+
+/* Ikon Gombok */
+.ak-icon-btn { 
+    background: none; 
+    border: 1px solid #e8dfd5; 
+    padding: 6px 10px; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    margin-left: 5px; 
+    transition: 0.2s; 
+    font-size: 16px; 
+    text-decoration: none; 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center;
+}
+.ak-icon-btn:hover { background: var(--ak-accent); border-color: var(--ak-primary); transform: translateY(-2px); }
