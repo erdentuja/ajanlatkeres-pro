@@ -1,4 +1,148 @@
+<!DOCTYPE html>
+<html>
 
-<h2>Köszönjük érdeklődését!</h2>
-<p>Ajánlatkérését megkaptuk, hamarosan jelentkezünk.</p>
-<p>Üdvözlettel:<br>Pollushof</p>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            color: #4a3f35;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f1ee;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            border: 1px solid #d6c9bb;
+        }
+
+        .header {
+            background-color: #8b5e3c;
+            color: #ffffff;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h2 {
+            margin: 0;
+            font-size: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .message-box {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            border-bottom: 2px solid #f7f4ef;
+            margin: 20px 0 10px 0;
+            padding-bottom: 5px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #8b5e3c;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        td {
+            padding: 8px 0;
+            border-bottom: 1px solid #fdfaf5;
+        }
+
+        .label {
+            font-weight: 700;
+            width: 45%;
+            color: #6f472b;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .value {
+            width: 55%;
+            color: #2d2d2d;
+            font-size: 14px;
+        }
+
+        .footer {
+            background-color: #4a3f35;
+            padding: 15px;
+            text-align: center;
+            font-size: 10px;
+            color: #d6c9bb;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Visszaigazolás</h2>
+        </div>
+
+        <div class="content">
+            <div class="message-box">
+                <h3 style="margin-top:0;">Kedves {{name}}!</h3>
+                <p>Köszönjük megtisztelő érdeklődését!<br>Ajánlatkérését rendszerünk rögzítette, munkatársunk hamarosan
+                    felveszi Önnel a kapcsolatot.</p>
+            </div>
+
+            <div class="section-header">
+                <p class="section-title">📅 Foglalás részletei</p>
+            </div>
+            <table>
+                <tr>
+                    <td class="label">Érkezés:</td>
+                    <td class="value"><strong>{{arrival}}</strong></td>
+                </tr>
+                <tr>
+                    <td class="label">Éjszakák / Szobák:</td>
+                    <td class="value">{{nights}} éj / {{rooms}} db</td>
+                </tr>
+                <tr>
+                    <td class="label">Vendégek:</td>
+                    <td class="value">{{adults}} felnőtt + {{children}} gyermek</td>
+                </tr>
+                <tr>
+                    <td class="label">Választott csomag:</td>
+                    <td class="value">{{package}}</td>
+                </tr>
+            </table>
+
+            <div class="section-header">
+                <p class="section-title">✉️ Üzenet</p>
+            </div>
+            <p style="font-style:italic; font-size:14px; color:#555;">{{note}}</p>
+        </div>
+
+        <div class="footer">
+            Ajánlatkérés Pro rendszer - Pollushof Panzió & Étterem
+        </div>
+    </div>
+</body>
+
+</html>

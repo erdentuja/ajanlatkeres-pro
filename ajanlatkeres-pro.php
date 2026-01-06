@@ -2,7 +2,7 @@
 /*
 Plugin Name: Ajánlatkérés Pro
 Description: Ajánlatkérő űrlap – szép admin UI + HTML email. Használat: [ajanlatkeres] és [ajanlat_lista]
-Version: 1.34
+Version: 1.35
 Author: András
 */
 if (!defined('ABSPATH'))
@@ -420,11 +420,31 @@ function ak_handle_submit()
     if ($wpdb->insert($wpdb->prefix . 'ajanlatkeres', $data)) {
         $admin_emails = ak_get_admin_emails();
         $headers = ['Content-Type: text/html; charset=UTF-8'];
+
+        // Admin Email
         $admin_msg = file_get_contents(plugin_dir_path(__FILE__) . 'emails/admin.html');
         foreach ($data as $key => $value) {
             $admin_msg = str_replace('{{' . $key . '}}', $value, $admin_msg);
         }
-        wp_mail($admin_emails, 'Új ajánlatkérés érkezett - ' . $data['name'], $admin_msg, $headers);
+        // Tárgy frissítve kérésre
+        wp_mail($admin_emails, 'Új Foglalási ajánlatkérés - ' . $data['name'], $admin_msg, $headers);
+
+        // User Confirmation Email
+        if (!empty($data['email'])) {
+            $user_msg = file_get_contents(plugin_dir_path(__FILE__) . 'emails/user.html');
+            foreach ($data as $key => $value) {
+                $user_msg = str_replace('{{' . $key . '}}', $value, $user_msg);
+            }
+            // Feladó: Pollushof Panzió & Étterem (WordPress beállítás vagy manuális fejléc ha szükséges, de alapból a WP beállítás dominál)
+            // Itt most csak a tartalmat küldjük, a feladót globálisan illene állítani, de a kérés a "Sender: ..." volt.
+            // Ezt filterrel lehetne szépen, de most inline headerrel próbáljuk.
+            $user_headers = [
+                'Content-Type: text/html; charset=UTF-8',
+                'From: Pollushof Panzió & Étterem <' . get_option('admin_email') . '>'
+            ];
+            wp_mail($data['email'], 'Visszaigazolás - Ajánlatkérését fogadtuk', $user_msg, $user_headers);
+        }
+
         wp_send_json_success(['message' => 'Köszönjük! Ajánlatkérését sikeresen elküldtük.']);
     } else {
         wp_send_json_error(['message' => 'Hiba történt a mentés során.']);
