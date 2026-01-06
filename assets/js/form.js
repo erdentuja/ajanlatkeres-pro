@@ -27,10 +27,19 @@ jQuery(function ($) {
         $.post(akAjax.url, $(this).serialize() + '&action=ajanlat_submit&nonce=' + akAjax.nonce, function (r) {
             if (r.success) {
                 // Siker esetén Modal megjelenítése
+                console.log('AJAX Success: Modal showing...');
                 $('#ajanlatForm')[0].reset();
-                $('#ak-success-modal').css('display', 'flex').hide().fadeIn(200, function () {
-                    $(this).addClass('show');
-                });
+
+                // Debug info
+                var $modal = $('#ak-success-modal');
+                console.log('AJAX Success. Modal found:', $modal.length);
+
+                // CSS osztály alapú megjelenítés (elkerüli a jQuery/CSS konfliktust)
+                $modal.css({
+                    'display': 'flex',
+                    'z-index': '10000'
+                }).addClass('show');
+
             } else {
                 $msg.css('color', '#d32f2f').text(r.data.message);
                 $btn.prop('disabled', false).text('Küldés');

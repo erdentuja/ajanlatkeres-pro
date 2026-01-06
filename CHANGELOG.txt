@@ -1,6 +1,9 @@
 
 Ajánlatkérés Pro – CHANGELOG
 
+= 1.38 =
+- Bugfix: Modal megjelenítési hiba javítása (CSS/JS konfliktus)
+
 = 1.37 =
 - Email: Admin email feladó javítása ("Pollushof Panzió & Étterem")
 
