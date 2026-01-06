@@ -1,6 +1,9 @@
 
 Ajánlatkérés Pro – CHANGELOG
 
+= 1.26 =
+- STYLE: Státusz kapcsoló függőleges igazításának javítása (margin reset)
+
 = 1.25 =
 - CSS JAVÍTÁS: Státusz kapcsoló és szöveg egy sorba rendezése
 - Kisebb UI igazítások
