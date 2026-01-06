@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Szimulált Teszt Környezet - Pollus Ajánlatkérés Pro (Admin v1.27)</title>
+    <!-- CSS Betöltése -->
+    <link rel="stylesheet" href="assets/css/form.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f0f0f1;
+            padding: 20px;
+        }
+
+        .sim-notice {
+            background: #fff;
+            padding: 15px;
+            border-left: 4px solid #72aee6;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+
+    <div class="sim-notice">
+        <h3>Szimulált Teszt Környezet (v1.27)</h3>
+        <p>Ez az oldal a <strong>Frontend Admin</strong> felületet szimulálja.<br>
+            Tesztelhető funkciók: <strong>Státusz váltás</strong>, <strong>Törlés</strong> és <strong>Szerkesztés
+                (Modal)</strong>.<br>
+            Minden művelet jelszót (`Ph-159753`) küld a háttérben (a konzolban láthatod).</p>
+    </div>
+
+    <!-- MOCK ADATOK & LOGIKA -->
+    <script>
+        var ak_fe_pass = "Ph-159753";
+        var akAjax = { url: 'MOCK_URL', nonce: '', status_nonce: '', admin_nonce: '' };
+
+        // MOCK ADATBÁZIS
+        var mockDB = {
+            1: { id: 1, name: 'Teszt Elek', email: 'teszt@pelda.hu', phone: '+36 30 123 4567', arrival: '2026-06-15', rooms: 2, nights: 3, adults: 2, children: 2, package: 'Wellness', note: 'Vegán étkezést kérek.' },
+            2: { id: 2, name: 'Másik Márton', email: 'marton@pelda.hu', phone: '+36 70 987 6543', arrival: '2026-08-20', rooms: 1, nights: 1, adults: 2, children: 0, package: 'Esküvő', note: 'Sok pezsgőt!' }
+        };
+
+        // AJAX MOCKOLÁS (jQuery felülírás)
+        // Fontos: Mentsük el az eredeti funkciókat, ha lennének, de itt most felülírjuk a szimulációhoz.
+
+        // POST hívások mockolása
+        var originalPost = jQuery.post;
+        jQuery.post = function (url, data, callback) {
+            console.log(">> SIM POST:", data);
+
+            // 1. Törlés
+            if (data.action === 'ak_fe_delete') {
+                if (data.fe_pass === 'Ph-159753') {
+                    setTimeout(function () { alert("SZIMULÁCIÓ: Törlés sikeres!"); callback({ success: true }); }, 300);
+                } else { alert("HIBA: Hibás jelszó!"); }
+            }
+
+            // 2. Adatok Lekérése (Get Details)
+            else if (data.action === 'ak_fe_get_details') {
+                if (data.fe_pass === 'Ph-159753') {
+                    var record = mockDB[data.id];
+                    setTimeout(function () {
+                        if (record) callback({ success: true, data: record });
+                        else alert("Hiba: Nem található (Sim)");
+                    }, 300);
+                }
+            }
+
+            // 3. Adatok Mentése (Save Details)
+            else if (data.action === 'ak_fe_save_details') {
+                if (data.fe_pass === 'Ph-159753') {
+                    // Mivel ez tömbként jöhet a serializeArray miatt, konvertáljuk objektummá a loghoz
+                    var savedData = {};
+                    if (Array.isArray(data)) {
+                        data.forEach(item => savedData[item.name] = item.value);
+                    } else { savedData = data; }
+
+                    console.log(">> MENTETT ADATOK:", savedData);
+
+                    // Mock DB frissítés (opcionális, csak a logika kedvéért)
+                    // ... 
+
+                    setTimeout(function () { callback({ success: true }); }, 500);
+                }
+            }
+        };
+
+        // AJAX hívások mockolása (Státusz váltáshoz)
+        var originalAjax = jQuery.ajax;
+        jQuery.ajax = function (opts) {
+            if (opts.type === 'POST' && opts.data.action === 'ak_update_status') {
+                console.log(">> SIM STATUS:", opts.data);
+                if (opts.data.fe_pass === 'Ph-159753') {
+                    setTimeout(function () { opts.success({ success: true }); }, 300);
+                }
+            }
+        };
+    </script>
+
+    <!-- TÁBLÁZAT HTML -->
+    <div class="ak-wrapper" style="max-width:1100px; margin:0 auto">
+        <div class="ak-card" style="max-width:100%; padding:40px;">
+            <h2 style="color:#8b5e3c; margin-bottom:20px; font-family:Georgia, serif;">Ajánlatok Kezelése (Sim)</h2>
+            <div style="overflow-x:auto">
+                <table class="ak-fe-table">
+                    <thead>
+                        <tr>
+                            <th>Dátum</th>
+                            <th>Vendég</th>
+                            <th>Csomag</th>
+                            <th>Státusz</th>
+                            <th style="text-align:right">Műveletek</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- SOR 1 -->
+                        <tr id="ak-row-1">
+                            <td style="font-size:11px; color:#999">01.06 12:00</td>
+                            <td><strong>Teszt Elek</strong><br><small style="color:#888;">teszt@pelda.hu</small></td>
+                            <td>📦 Wellness</td>
+                            <td>
+                                <div class="status-wrapper">
+                                    <label class="ak-switch">
+                                        <input type="checkbox" class="ak-fe-toggle" data-id="1">
+                                        <span class="ak-slider"></span>
+                                    </label>
+                                    <span class="ak-status-label status-label-uj">Új</span>
+                                </div>
+                            </td>
+                            <td style="text-align:right; white-space:nowrap;">
+                                <!-- EDIT GOMB (ÚJ) -->
+                                <div class="ak-action-buttons">
+                                    <button class="ak-fe-edit ak-icon-btn" data-id="1" title="Szerkesztés">✏️</button>
+                                    <button class="ak-fe-delete ak-icon-btn" data-id="1" title="Törlés">🗑️</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- SOR 2 -->
+                        <tr id="ak-row-2">
+                            <td style="font-size:11px; color:#999">01.05 10:30</td>
+                            <td><strong>Másik Márton</strong><br><small style="color:#888;">marton@pelda.hu</small></td>
+                            <td>💍 Esküvő</td>
+                            <td>
+                                <div class="status-wrapper">
+                                    <label class="ak-switch">
+                                        <input type="checkbox" class="ak-fe-toggle" data-id="2" checked>
+                                        <span class="ak-slider"></span>
+                                    </label>
+                                    <span class="ak-status-label status-label-feldolgozva">Feldolgozva</span>
+                                </div>
+                            </td>
+                            <td style="text-align:right; white-space:nowrap;">
+                                <!-- EDIT GOMB (ÚJ) -->
+                                <div class="ak-action-buttons">
+                                    <button class="ak-fe-edit ak-icon-btn" data-id="2" title="Szerkesztés">✏️</button>
+                                    <button class="ak-fe-delete ak-icon-btn" data-id="2" title="Törlés">🗑️</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL HTML (Ugyanaz, mint a PHP-ben) -->
+    <div id="ak-edit-modal" class="ak-modal" style="display:none;">
+        <div class="ak-modal-content">
+            <div class="ak-modal-header">
+                <h3>Ajánlat Szerkesztése</h3>
+                <span class="ak-modal-close">&times;</span>
+            </div>
+            <form id="ak-edit-form">
+                <input type="hidden" name="id" id="edit-id">
+                <div class="ak-row">
+                    <div class="ak-field-group">
+                        <label>Név</label>
+                        <input type="text" name="name" id="edit-name" required>
+                    </div>
+                    <div class="ak-field-group">
+                        <label>Email</label>
+                        <input type="email" name="email" id="edit-email" required>
+                    </div>
+                </div>
+                <div class="ak-row">
+                    <div class="ak-field-group">
+                        <label>Telefon</label>
+                        <input type="text" name="phone" id="edit-phone">
+                    </div>
+                    <div class="ak-field-group">
+                        <label>Érkezés</label>
+                        <input type="date" name="arrival" id="edit-arrival">
+                    </div>
+                </div>
+                <div class="ak-row">
+                    <div class="ak-mini">
+                        <label>Szobák</label>
+                        <input type="number" name="rooms" id="edit-rooms">
+                    </div>
+                    <div class="ak-mini">
+                        <label>Éjszakák</label>
+                        <input type="number" name="nights" id="edit-nights">
+                    </div>
+                    <div class="ak-mini">
+                        <label>Felnőtt</label>
+                        <input type="number" name="adults" id="edit-adults">
+                    </div>
+                    <div class="ak-mini">
+                        <label>Gyermek</label>
+                        <input type="number" name="children" id="edit-children">
+                    </div>
+                </div>
+                <div class="ak-field-group">
+                    <label>Csomag</label>
+                    <select name="package" id="edit-package">
+                        <option value="Golf">Golf Csomag</option>
+                        <option value="Wellness">Wellness Hétvége</option>
+                        <option value="Konferencia">Konferencia</option>
+                        <option value="Esküvő">Esküvő</option>
+                    </select>
+                </div>
+                <div class="ak-field-group">
+                    <label>Megjegyzés</label>
+                    <textarea name="note" id="edit-note" rows="3"></textarea>
+                </div>
+                <div class="ak-modal-actions">
+                    <button type="button" class="ak-btn-cancel ak-modal-close-btn">Mégse</button>
+                    <button type="submit" class="ak-submit"
+                        style="margin-top:0; width:auto; padding:12px 25px;">Mentés</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Logika Betöltése -->
+    <script src="assets/js/form.js"></script>
+
+</body>
+
+</html>

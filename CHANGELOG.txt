@@ -1,6 +1,10 @@
 
 Ajánlatkérés Pro – CHANGELOG
 
+= 1.28 =
+- FIX: Frontend Edit gombok igazítása (elcsúszás javítása)
+- FIX: Cache ürítés kényszerítése frissítéskor (modal hiba javítása)
+
 = 1.27 =
 - FEATURE: Frontend Admin Szerkesztő Modal (AJAX alapú szerkesztés felugró ablakban)
 

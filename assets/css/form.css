@@ -261,13 +261,24 @@ input:checked+.ak-slider:before {
     padding: 6px 10px;
     border-radius: 6px;
     cursor: pointer;
-    margin-left: 5px;
+    margin: 0;
+    /* Margin reset, gap kezeli */
     transition: 0.2s;
     font-size: 16px;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    height: 32px;
+    /* Fix magasság a konzisztenciához */
+}
+
+.ak-action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    /* Távolság a gombok között */
+    align-items: center;
 }
 
 .ak-icon-btn:hover {
