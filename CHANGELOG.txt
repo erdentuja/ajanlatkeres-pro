@@ -1,6 +1,11 @@
 
 Ajánlatkérés Pro – CHANGELOG
 
+= 1.31 =
+- FEATURE: Frontend Admin Kilépés gomb
+- FEATURE: Automatikus kijelentkezés 10 perc inaktivitás után
+- FIX: Üres csomagajánlat mentésének támogatása az admin listában
+
 = 1.30 =
 - UI: Modal bezárása csak gombbal (háttérre kattintva nem záródik be)
 - FEATURE: Dinamikus Csomagok kezelése az Admin felületen (Beállítások)

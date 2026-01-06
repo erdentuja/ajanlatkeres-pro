@@ -2,7 +2,7 @@
 /*
 Plugin Name: Ajánlatkérés Pro
 Description: Ajánlatkérő űrlap – szép admin UI + HTML email. Használat: [ajanlatkeres] és [ajanlat_lista]
-Version: 1.30
+Version: 1.31
 Author: András
 */
 if (!defined('ABSPATH'))
@@ -215,9 +215,49 @@ function ak_shortcode_admin_list($atts)
     // Pass password to JS for AJAX calls
     echo '<script>var ak_fe_pass = "' . esc_js($code) . '";</script>';
     ?>
+    <script>
+        // Auto-Logout & Manual Logout Logic
+        (function () {
+            var idleTime = 0;
+            var idleLimit = 10; // 10 perc
+            var idleInterval = setInterval(timerIncrement, 60000); // 1 percenként
+
+            function timerIncrement() {
+                idleTime++;
+                if (idleTime >= idleLimit) {
+                    akLogout();
+                }
+            }
+
+            function resetTimer() {
+                idleTime = 0;
+            }
+
+            // Aktivitás figyelése
+            window.onload = resetTimer;
+            window.onmousemove = resetTimer;
+            window.onmousedown = resetTimer; // Clicks
+            window.ontouchstart = resetTimer; // Touchscreen
+            window.onclick = resetTimer;     // Touchpad clicks
+            window.onkeydown = resetTimer;
+
+            window.akLogout = function () {
+                // URL paraméterek tisztítása (access=...)
+                var url = new URL(window.location.href);
+                url.searchParams.delete('access');
+                // Form újraküldés elkerülése érdekében tiszta URL-re navigálunk
+                window.location.href = url.toString();
+            };
+        })();
+    </script>
+
     <div class="ak-wrapper" style="max-width:1100px; margin:0 auto">
         <div class="ak-card" style="max-width:100%; padding:40px;">
-            <h2 style="color:#8b5e3c; margin-bottom:20px; font-family:Georgia, serif;">Ajánlatok Kezelése</h2>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h2 style="color:#8b5e3c; margin:0; font-family:Georgia, serif;">Ajánlatok Kezelése</h2>
+                <button onclick="akLogout()" class="ak-submit"
+                    style="margin:0; background:#d32f2f; border-color:#b91c1c; padding:8px 15px; font-size:14px;">Kilépés</button>
+            </div>
             <div style="overflow-x:auto">
                 <table class="ak-fe-table">
                     <thead>
