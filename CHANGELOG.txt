@@ -1,6 +1,10 @@
 
 Ajánlatkérés Pro – CHANGELOG
 
+= 1.25 =
+- CSS JAVÍTÁS: Státusz kapcsoló és szöveg egy sorba rendezése
+- Kisebb UI igazítások
+
 = 1.24 =
 - BIZTONSÁG: AJAX védelmi rendszer megerősítése
 - HIBAJAVÍTÁS: Admin lista nézet státuszváltó javítása

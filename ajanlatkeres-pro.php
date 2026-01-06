@@ -2,7 +2,7 @@
 /*
 Plugin Name: Ajánlatkérés Pro
 Description: Ajánlatkérő űrlap – szép admin UI + HTML email. Használat: [ajanlatkeres] és [ajanlat_lista]
-Version: 1.24
+Version: 1.25
 Author: András
 */
 if (!defined('ABSPATH'))
