@@ -2,7 +2,7 @@
 /*
 Plugin Name: Ajánlatkérés Pro
 Description: Ajánlatkérő űrlap – szép admin UI + HTML email. Használat: [ajanlatkeres] és [ajanlat_lista]
-Version: 1.35
+Version: 1.36
 Author: András
 */
 if (!defined('ABSPATH'))
@@ -177,6 +177,23 @@ function ak_shortcode_form($atts)
             <button type="submit" class="ak-submit">Küldés</button>
             <div class="ak-msg"></div>
         </form>
+
+        <!-- Success Modal -->
+        <div id="ak-success-modal" class="ak-modal">
+            <div class="ak-modal-content" style="text-align:center; max-width:500px">
+                <div class="ak-modal-header" style="justify-content:center; border:none; padding-bottom:0">
+                    <h3 style="font-size:24px; color:#8b5e3c;">Köszönjük!</h3>
+                </div>
+                <div style="padding:20px 0; font-size:16px; line-height:1.6;">
+                    Ajánlatkérését sikeresen elküldtük!<br>
+                    Hamarosan felvesszük Önnel a kapcsolatot.
+                </div>
+                <div class="ak-modal-actions" style="justify-content:center; border:none; padding-top:10px">
+                    <button type="button" class="ak-submit ak-redirect-home"
+                        style="margin:0; width:auto; padding:12px 30px; font-size:14px;">Rendben</button>
+                </div>
+            </div>
+        </div>
     </div>
     <?php
     return ob_get_clean();

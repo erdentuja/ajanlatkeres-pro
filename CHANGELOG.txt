@@ -1,6 +1,11 @@
 
 Ajánlatkérés Pro – CHANGELOG
 
+= 1.36 =
+- UX: Sikeres ajánlatkérés után "Köszönjük!" modal ablak megjelenítése
+- UX: "Rendben" gombra kattintva átirányítás a főoldalra
+- Dev: Tesztkörnyezet frissítése a modal szimulációjához
+
 = 1.35 =
 - Email: Admin email tárgy és lábléc módosítása (Panzió)
 - Email: Látogatói automatikus visszaigazoló email küldése

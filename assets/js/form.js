@@ -26,13 +26,22 @@ jQuery(function ($) {
 
         $.post(akAjax.url, $(this).serialize() + '&action=ajanlat_submit&nonce=' + akAjax.nonce, function (r) {
             if (r.success) {
-                $msg.css('color', '#166534').text(r.data.message);
+                // Siker esetén Modal megjelenítése
                 $('#ajanlatForm')[0].reset();
+                $('#ak-success-modal').css('display', 'flex').hide().fadeIn(200, function () {
+                    $(this).addClass('show');
+                });
             } else {
                 $msg.css('color', '#d32f2f').text(r.data.message);
+                $btn.prop('disabled', false).text('Küldés');
             }
-            $btn.prop('disabled', false).text('Küldés');
         });
+    });
+
+    // Siker Modal - Rendben gomb (Vissza a főoldalra)
+    $(document).on('click', '.ak-redirect-home', function (e) {
+        e.preventDefault();
+        window.location.href = window.location.origin;
     });
 
     // Frontend Admin: Státusz kapcsoló (Toggle) dinamikus felirattal
