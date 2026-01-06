@@ -2,7 +2,7 @@
 /*
 Plugin Name: Ajánlatkérés Pro
 Description: Ajánlatkérő űrlap – szép admin UI + HTML email. Használat: [ajanlatkeres] és [ajanlat_lista]
-Version: 1.28
+Version: 1.29
 Author: András
 */
 if (!defined('ABSPATH'))
@@ -100,6 +100,23 @@ function ak_get_admin_emails()
     return $opt ? array_map('trim', explode(',', $opt)) : [get_option('admin_email')];
 }
 
+function ak_get_active_packages()
+{
+    $opt = get_option('ak_package_list');
+    if ($opt) {
+        return array_filter(array_map('trim', explode("\n", $opt)));
+    }
+    // Fallback defaults
+    return [
+        'A lovaglás szerelmeseinek',
+        'Fittnesz hétvége',
+        'Pihenés a Gerecse lábánál',
+        'Romantikus hétvége',
+        'Töltődjön fel napfénnyel',
+        'Esküvői csomagajánlat'
+    ];
+}
+
 /**
  * SHORTCODE 1: Ajánlatkérő űrlap [ajanlatkeres]
  */
@@ -146,12 +163,9 @@ function ak_shortcode_form($atts)
             <label>Választott Csomagajánlat</label>
             <select name="package">
                 <option value="">-- Kérjük válasszon --</option>
-                <option>A lovaglás szerelmeseinek</option>
-                <option>Fittnesz hétvége</option>
-                <option>Pihenés a Gerecse lábánál</option>
-                <option>Romantikus hétvége</option>
-                <option>Töltődjön fel napfénnyel</option>
-                <option>Esküvői csomagajánlat</option>
+                <?php foreach (ak_get_active_packages() as $pkg): ?>
+                    <option value="<?php echo esc_attr($pkg); ?>"><?php echo esc_html($pkg); ?></option>
+                <?php endforeach; ?>
             </select>
             <label>Megjegyzés</label>
             <textarea name="note" rows="4"></textarea>
@@ -306,10 +320,9 @@ function ak_shortcode_admin_list($atts)
                 <div class="ak-field-group">
                     <label>Csomag</label>
                     <select name="package" id="edit-package">
-                        <option value="Golf">Golf Csomag</option>
-                        <option value="Wellness">Wellness Hétvége</option>
-                        <option value="Konferencia">Konferencia</option>
-                        <option value="Esküvő">Esküvő</option>
+                        <?php foreach (ak_get_active_packages() as $pkg): ?>
+                            <option value="<?php echo esc_attr($pkg); ?>"><?php echo esc_html($pkg); ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="ak-field-group">

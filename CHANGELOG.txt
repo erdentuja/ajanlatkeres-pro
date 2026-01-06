@@ -1,6 +1,11 @@
 
 Ajánlatkérés Pro – CHANGELOG
 
+= 1.29 =
+- FEATURE: Dinamikus Csomagok kezelése az Admin felületen (Beállítások)
+- UI: Szélesebb (2 hasábos) szerkesztő modal
+- FIX: Csomaglista szinkronizáció a frontend és backend között
+
 = 1.28 =
 - FIX: Frontend Edit gombok igazítása (elcsúszás javítása)
 - FIX: Cache ürítés kényszerítése frissítéskor (modal hiba javítása)
