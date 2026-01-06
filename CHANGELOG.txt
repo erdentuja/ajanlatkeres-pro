@@ -1,6 +1,9 @@
 
 Ajánlatkérés Pro – CHANGELOG
 
+= 1.37 =
+- Email: Admin email feladó javítása ("Pollushof Panzió & Étterem")
+
 = 1.36 =
 - UX: Sikeres ajánlatkérés után "Köszönjük!" modal ablak megjelenítése
 - UX: "Rendben" gombra kattintva átirányítás a főoldalra

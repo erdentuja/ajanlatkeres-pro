@@ -2,7 +2,7 @@
 /*
 Plugin Name: Ajánlatkérés Pro
 Description: Ajánlatkérő űrlap – szép admin UI + HTML email. Használat: [ajanlatkeres] és [ajanlat_lista]
-Version: 1.36
+Version: 1.37
 Author: András
 */
 if (!defined('ABSPATH'))
@@ -436,7 +436,9 @@ function ak_handle_submit()
     ];
     if ($wpdb->insert($wpdb->prefix . 'ajanlatkeres', $data)) {
         $admin_emails = ak_get_admin_emails();
-        $headers = ['Content-Type: text/html; charset=UTF-8'];
+        $headers = [];
+        $headers[] = 'Content-Type: text/html; charset=UTF-8';
+        $headers[] = 'From: Pollushof Panzió & Étterem <' . get_option('admin_email') . '>';
 
         // Admin Email
         $admin_msg = file_get_contents(plugin_dir_path(__FILE__) . 'emails/admin.html');
@@ -452,9 +454,6 @@ function ak_handle_submit()
             foreach ($data as $key => $value) {
                 $user_msg = str_replace('{{' . $key . '}}', $value, $user_msg);
             }
-            // Feladó: Pollushof Panzió & Étterem (WordPress beállítás vagy manuális fejléc ha szükséges, de alapból a WP beállítás dominál)
-            // Itt most csak a tartalmat küldjük, a feladót globálisan illene állítani, de a kérés a "Sender: ..." volt.
-            // Ezt filterrel lehetne szépen, de most inline headerrel próbáljuk.
             $user_headers = [
                 'Content-Type: text/html; charset=UTF-8',
                 'From: Pollushof Panzió & Étterem <' . get_option('admin_email') . '>'
