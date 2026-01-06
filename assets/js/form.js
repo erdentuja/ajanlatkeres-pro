@@ -119,4 +119,82 @@ jQuery(function ($) {
             }
         });
     });
+
+    // --- Frontend Admin: Szerkesztés Modal --- //
+
+    // Megnyitás
+    $(document).on('click', '.ak-fe-edit', function (e) {
+        e.preventDefault();
+        var id = $(this).data('id');
+        var $btn = $(this);
+        $btn.prop('disabled', true).text('...');
+
+        $.post(akAjax.url, {
+            action: 'ak_fe_get_details',
+            id: id,
+            fe_pass: (typeof ak_fe_pass !== 'undefined' ? ak_fe_pass : '')
+        }, function (r) {
+            $btn.prop('disabled', false).text('✏️');
+            if (r.success) {
+                var d = r.data;
+                // Form kitöltése
+                $('#edit-id').val(d.id);
+                $('#edit-name').val(d.name);
+                $('#edit-email').val(d.email);
+                $('#edit-phone').val(d.phone);
+                $('#edit-arrival').val(d.arrival);
+                $('#edit-rooms').val(d.rooms);
+                $('#edit-nights').val(d.nights);
+                $('#edit-adults').val(d.adults);
+                $('#edit-children').val(d.children);
+                $('#edit-package').val(d.package);
+                $('#edit-note').val(d.note);
+
+                // Modal megjelenítés
+                $('#ak-edit-modal').css('display', 'flex').hide().fadeIn(200, function () {
+                    $(this).addClass('show');
+                });
+            } else {
+                alert('Hiba: ' + (r.data.message || 'Adatlekérés sikertelen'));
+            }
+        });
+    });
+
+    // Bezárás
+    $(document).on('click', '.ak-modal-close, .ak-modal-close-btn', function () {
+        $('#ak-edit-modal').removeClass('show').fadeOut(200);
+    });
+
+    // Bezárás ha a háttérre kattint
+    $(window).on('click', function (e) {
+        if ($(e.target).is('#ak-edit-modal')) {
+            $('#ak-edit-modal').removeClass('show').fadeOut(200);
+        }
+    });
+
+    // Mentés
+    $('#ak-edit-form').on('submit', function (e) {
+        e.preventDefault();
+        var $form = $(this);
+        var $btn = $form.find('.ak-submit');
+        $btn.prop('disabled', true).text('Mentés...');
+
+        var data = $form.serializeArray();
+        data.push({ name: 'action', value: 'ak_fe_save_details' });
+        data.push({ name: 'fe_pass', value: (typeof ak_fe_pass !== 'undefined' ? ak_fe_pass : '') });
+
+        $.post(akAjax.url, data, function (r) {
+            $btn.prop('disabled', false).text('Mentés');
+            if (r.success) {
+                // Siker: Bezárás és újratöltés, hogy a táblázat frissüljön
+                $('#ak-edit-modal').removeClass('show').fadeOut(200, function () {
+                    alert('Sikeres mentés!');
+                    location.reload();
+                });
+            } else {
+                alert('Hiba: ' + (r.data.message || 'Mentés sikertelen'));
+            }
+        });
+    });
+
 });

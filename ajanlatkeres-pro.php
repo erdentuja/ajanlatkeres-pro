@@ -2,7 +2,7 @@
 /*
 Plugin Name: Ajánlatkérés Pro
 Description: Ajánlatkérő űrlap – szép admin UI + HTML email. Használat: [ajanlatkeres] és [ajanlat_lista]
-Version: 1.26
+Version: 1.27
 Author: András
 */
 if (!defined('ABSPATH'))
@@ -243,8 +243,8 @@ function ak_shortcode_admin_list($atts)
                                     </div>
                                 </td>
                                 <td style="text-align:right; white-space:nowrap;">
-                                    <a href="<?php echo admin_url('admin.php?page=ajanlatok&edit=' . $r->id); ?>"
-                                        class="ak-icon-btn" title="Szerkesztés">✏️</a>
+                                    <button class="ak-fe-edit ak-icon-btn" data-id="<?php echo $r->id; ?>"
+                                        title="Szerkesztés">✏️</button>
                                     <button class="ak-fe-delete ak-icon-btn" data-id="<?php echo $r->id; ?>"
                                         title="Törlés">🗑️</button>
                                 </td>
@@ -253,6 +253,75 @@ function ak_shortcode_admin_list($atts)
                     </tbody>
                 </table>
             </div>
+        </div>
+    </div>
+
+    <!-- Frontend Edit Modal -->
+    <div id="ak-edit-modal" class="ak-modal" style="display:none;">
+        <div class="ak-modal-content">
+            <div class="ak-modal-header">
+                <h3>Ajánlat Szerkesztése</h3>
+                <span class="ak-modal-close">&times;</span>
+            </div>
+            <form id="ak-edit-form">
+                <input type="hidden" name="id" id="edit-id">
+                <div class="ak-row">
+                    <div class="ak-field-group">
+                        <label>Név</label>
+                        <input type="text" name="name" id="edit-name" required>
+                    </div>
+                    <div class="ak-field-group">
+                        <label>Email</label>
+                        <input type="email" name="email" id="edit-email" required>
+                    </div>
+                </div>
+                <div class="ak-row">
+                    <div class="ak-field-group">
+                        <label>Telefon</label>
+                        <input type="text" name="phone" id="edit-phone">
+                    </div>
+                    <div class="ak-field-group">
+                        <label>Érkezés</label>
+                        <input type="date" name="arrival" id="edit-arrival">
+                    </div>
+                </div>
+                <div class="ak-row">
+                    <div class="ak-mini">
+                        <label>Szobák</label>
+                        <input type="number" name="rooms" id="edit-rooms">
+                    </div>
+                    <div class="ak-mini">
+                        <label>Éjszakák</label>
+                        <input type="number" name="nights" id="edit-nights">
+                    </div>
+                    <div class="ak-mini">
+                        <label>Felnőtt</label>
+                        <input type="number" name="adults" id="edit-adults">
+                    </div>
+                    <div class="ak-mini">
+                        <label>Gyermek</label>
+                        <input type="number" name="children" id="edit-children">
+                    </div>
+                </div>
+                <div class="ak-field-group">
+                    <label>Csomag</label>
+                    <select name="package" id="edit-package">
+                        <option value="Golf">Golf Csomag</option>
+                        <option value="Wellness">Wellness Hétvége</option>
+                        <option value="Konferencia">Konferencia</option>
+                        <option value="Esküvő">Esküvő</option>
+                    </select>
+                </div>
+                <div class="ak-field-group">
+                    <label>Megjegyzés</label>
+                    <textarea name="note" id="edit-note" rows="3"></textarea>
+                </div>
+                <div class="ak-modal-actions">
+                    <button type="button" class="ak-btn-cancel ak-modal-close-btn">Mégse</button>
+                    <button type="submit" class="ak-submit"
+                        style="margin-top:0; width:auto; padding:12px 25px;">Mentés</button>
+                </div>
+            </form>
         </div>
     </div>
     <?php
@@ -354,4 +423,62 @@ function ak_ajax_fe_delete()
         wp_send_json_success();
     }
     wp_send_json_error();
+}
+
+/**
+ * AJAX: Részletek lekérése Szerkesztéshez (Frontend Admin)
+ */
+add_action('wp_ajax_ak_fe_get_details', 'ak_ajax_fe_get_details');
+add_action('wp_ajax_nopriv_ak_fe_get_details', 'ak_ajax_fe_get_details');
+function ak_ajax_fe_get_details()
+{
+    $pass = isset($_POST['fe_pass']) ? $_POST['fe_pass'] : '';
+    if ($pass !== 'Ph-159753' && !current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'Hozzáférés megtagadva.']);
+    }
+
+    global $wpdb;
+    $id = intval($_POST['id']);
+    $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}ajanlatkeres WHERE id = %d", $id));
+
+    if ($row) {
+        wp_send_json_success($row);
+    } else {
+        wp_send_json_error(['message' => 'Nem található.']);
+    }
+}
+
+/**
+ * AJAX: Részletek Mentése (Frontend Admin)
+ */
+add_action('wp_ajax_ak_fe_save_details', 'ak_ajax_fe_save_details');
+add_action('wp_ajax_nopriv_ak_fe_save_details', 'ak_ajax_fe_save_details');
+function ak_ajax_fe_save_details()
+{
+    $pass = isset($_POST['fe_pass']) ? $_POST['fe_pass'] : '';
+    if ($pass !== 'Ph-159753' && !current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'Hozzáférés megtagadva.']);
+    }
+
+    global $wpdb;
+    $id = intval($_POST['id']);
+    $data = [
+        'name' => sanitize_text_field($_POST['name']),
+        'email' => sanitize_email($_POST['email']),
+        'phone' => sanitize_text_field($_POST['phone']),
+        'arrival' => sanitize_text_field($_POST['arrival']),
+        'rooms' => intval($_POST['rooms']),
+        'nights' => intval($_POST['nights']),
+        'adults' => intval($_POST['adults']),
+        'children' => intval($_POST['children']),
+        'package' => sanitize_text_field($_POST['package']),
+        'note' => sanitize_textarea_field($_POST['note']),
+    ];
+
+    if ($wpdb->update($wpdb->prefix . 'ajanlatkeres', $data, ['id' => $id])) {
+        wp_send_json_success(['message' => 'Sikeres mentés!']);
+    } else {
+        // Ha nem változott semmi, az update false-al térhet vissza, de az nem hiba
+        wp_send_json_success(['message' => 'Mentve (nem volt módosítás).']);
+    }
 }

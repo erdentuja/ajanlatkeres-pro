@@ -1,6 +1,9 @@
 
 Ajánlatkérés Pro – CHANGELOG
 
+= 1.27 =
+- FEATURE: Frontend Admin Szerkesztő Modal (AJAX alapú szerkesztés felugró ablakban)
+
 = 1.26 =
 - STYLE: Státusz kapcsoló függőleges igazításának javítása (margin reset)
 
