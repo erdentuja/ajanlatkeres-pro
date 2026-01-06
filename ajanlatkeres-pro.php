@@ -2,7 +2,7 @@
 /*
 Plugin Name: Ajánlatkérés Pro
 Description: Ajánlatkérő űrlap – szép admin UI + HTML email. Használat: [ajanlatkeres] és [ajanlat_lista]
-Version: 1.33
+Version: 1.34
 Author: András
 */
 if (!defined('ABSPATH'))
@@ -368,6 +368,7 @@ function ak_shortcode_admin_list($atts)
                 <div class="ak-field-group">
                     <label>Csomag</label>
                     <select name="package" id="edit-package">
+                        <option value="">-- Nincs csomag --</option>
                         <?php foreach (ak_get_active_packages() as $pkg): ?>
                             <option value="<?php echo esc_attr($pkg); ?>"><?php echo esc_html($pkg); ?></option>
                         <?php endforeach; ?>

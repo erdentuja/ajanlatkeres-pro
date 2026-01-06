@@ -1,6 +1,9 @@
 
 Ajánlatkérés Pro – CHANGELOG
 
+= 1.34 =
+- UI: Üres csomag opció (-- Nincs csomag --) hozzáadása az admin szerkesztőhöz
+
 = 1.33 =
 - UI: Kilépés gomb mérete és stílusa optimalizálva (micro sizing)
 
