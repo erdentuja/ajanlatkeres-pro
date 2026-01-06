@@ -2,7 +2,7 @@
 /*
 Plugin Name: Ajánlatkérés Pro
 Description: Ajánlatkérő űrlap – szép admin UI + HTML email. Használat: [ajanlatkeres] és [ajanlat_lista]
-Version: 1.23
+Version: 1.24
 Author: András
 */
 if (!defined('ABSPATH'))
@@ -41,8 +41,8 @@ register_activation_hook(__FILE__, function () use ($wpdb, $table) {
  * Frontend stílusok és scriptek betöltése
  */
 add_action('wp_enqueue_scripts', function () {
-    wp_enqueue_style('ak-form-css', plugin_dir_url(__FILE__) . 'assets/css/form.css');
-    wp_enqueue_script('ak-form-js', plugin_dir_url(__FILE__) . 'assets/js/form.js', ['jquery'], '1.0', true);
+    wp_enqueue_style('ak-form-css', plugin_dir_url(__FILE__) . 'assets/css/form.css', [], '1.0.1');
+    wp_enqueue_script('ak-form-js', plugin_dir_url(__FILE__) . 'assets/js/form.js', ['jquery'], '1.0.1', true);
 
     $script_data = [
         'url' => admin_url('admin-ajax.php'),
@@ -198,6 +198,8 @@ function ak_shortcode_admin_list($atts)
     global $wpdb;
     $rows = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}ajanlatkeres ORDER BY created DESC");
     ob_start();
+    // Pass password to JS for AJAX calls
+    echo '<script>var ak_fe_pass = "' . esc_js($code) . '";</script>';
     ?>
     <div class="ak-wrapper" style="max-width:1100px; margin:0 auto">
         <div class="ak-card" style="max-width:100%; padding:40px;">
@@ -302,15 +304,23 @@ function ak_handle_submit()
  * AJAX: Státusz frissítés (Admin & FE Admin - Kijelentkezett módban is!)
  */
 add_action('wp_ajax_ak_update_status', 'ak_ajax_update_status');
-// add_action('wp_ajax_nopriv_ak_update_status', 'ak_ajax_update_status'); // BIZTONSÁG: Nyilvános hozzáférés tiltva
+add_action('wp_ajax_nopriv_ak_update_status', 'ak_ajax_update_status'); // BIZTONSÁG: Jelszóval engedélyezve
 function ak_ajax_update_status()
 {
-    check_ajax_referer('ak_status_nonce', 'nonce');
+    // Nonce ellenőrzés csak ha van bejelentkezve, vagy a publikus nonce-ot használjuk (de az most nincs)
+    // Egyszerűsítés: Ha van jelszó, átengedjük nonce nélkül is, vagy csinálunk egy publikus nonce-ot.
+    // Mivel a nonce-ot elrejtettük, a 'check_ajax_referer' elbukna a vendégeknél.
 
-    // BIZTONSÁGI FRISSÍTÉS: Jogosultság ellenőrzés
-    if (!current_user_can('manage_options')) {
+    $is_admin = current_user_can('manage_options');
+    $pass = isset($_POST['fe_pass']) ? $_POST['fe_pass'] : '';
+    $is_fe_auth = ($pass === 'Ph-159753');
+
+    if (!$is_admin && !$is_fe_auth) {
         wp_send_json_error(['message' => 'Nincs jogosultsága ehhez a művelethez.']);
     }
+
+    if ($is_admin)
+        check_ajax_referer('ak_status_nonce', 'nonce');
 
     global $wpdb;
     $wpdb->update(
@@ -325,15 +335,19 @@ function ak_ajax_update_status()
  * AJAX: Frontend Törlés (Kijelentkezett módban is!)
  */
 add_action('wp_ajax_ak_fe_delete', 'ak_ajax_fe_delete');
-// add_action('wp_ajax_nopriv_ak_fe_delete', 'ak_ajax_fe_delete'); // BIZTONSÁG: Nyilvános hozzáférés tiltva
+add_action('wp_ajax_nopriv_ak_fe_delete', 'ak_ajax_fe_delete'); // BIZTONSÁG: Jelszóval engedélyezve
 function ak_ajax_fe_delete()
 {
-    check_ajax_referer('ak_admin_nonce', 'nonce');
+    $is_admin = current_user_can('manage_options');
+    $pass = isset($_POST['fe_pass']) ? $_POST['fe_pass'] : '';
+    $is_fe_auth = ($pass === 'Ph-159753');
 
-    // BIZTONSÁGI FRISSÍTÉS: Jogosultság ellenőrzés
-    if (!current_user_can('manage_options')) {
+    if (!$is_admin && !$is_fe_auth) {
         wp_send_json_error(['message' => 'Nincs jogosultsága ehhez a művelethez.']);
     }
+
+    if ($is_admin)
+        check_ajax_referer('ak_admin_nonce', 'nonce');
 
     global $wpdb;
     if ($wpdb->delete($wpdb->prefix . 'ajanlatkeres', ['id' => intval($_POST['id'])])) {

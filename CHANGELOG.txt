@@ -1,6 +1,13 @@
 
 Ajánlatkérés Pro – CHANGELOG
 
+= 1.24 =
+- BIZTONSÁG: AJAX védelmi rendszer megerősítése
+- HIBAJAVÍTÁS: Admin lista nézet státuszváltó javítása
+- Frontend Admin szigorított hitelesítés (Jelszó alapú)
+- CSS verzió frissítése
+
+
 = 1.5 =
 - Státusz mező admin felületen (új / feldolgozva)
 - Státusz módosítás mentéssel

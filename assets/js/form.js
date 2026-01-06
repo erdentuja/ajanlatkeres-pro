@@ -60,11 +60,13 @@ jQuery(function ($) {
                 id: id,
                 status: status,
                 nonce: akAjax.status_nonce,
+                fe_pass: (typeof ak_fe_pass !== 'undefined' ? ak_fe_pass : ''),
                 is_fe: 1
             },
             beforeSend: function () {
-                if (!akAjax.status_nonce) {
-                    alert('Ehhez a művelethez be kell jelentkeznie adminisztrátorként!');
+                // Ha se nonce, se jelszó, akkor hiba
+                if (!akAjax.status_nonce && typeof ak_fe_pass === 'undefined') {
+                    alert('Ehhez a művelethez be kell jelentkeznie!');
                     $this.css('opacity', '1').prop('disabled', false);
                     // Visszaállítás
                     $this.prop('checked', !isChecked);
@@ -97,8 +99,8 @@ jQuery(function ($) {
 
         $(this).prop('disabled', true);
 
-        if (!akAjax.admin_nonce) {
-            alert('Ehhez a művelethez be kell jelentkeznie adminisztrátorként!');
+        if (!akAjax.admin_nonce && typeof ak_fe_pass === 'undefined') {
+            alert('Ehhez a művelethez be kell jelentkeznie!');
             $(this).prop('disabled', false);
             return;
         }
@@ -106,7 +108,8 @@ jQuery(function ($) {
         $.post(akAjax.url, {
             action: 'ak_fe_delete',
             id: id,
-            nonce: akAjax.admin_nonce
+            nonce: akAjax.admin_nonce,
+            fe_pass: (typeof ak_fe_pass !== 'undefined' ? ak_fe_pass : '')
         }, function (r) {
             if (r.success) {
                 $row.css('background', '#fee2e2').fadeOut(400, function () { $(this).remove(); });

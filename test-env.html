@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Szimulált Teszt Környezet - Pollus Ajánlatkérés Pro</title>
+    <!-- CSS Betöltése -->
+    <link rel="stylesheet" href="assets/css/form.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f0f0f1;
+            padding: 20px;
+        }
+
+        .sim-notice {
+            background: #fff;
+            padding: 15px;
+            border-left: 4px solid #72aee6;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+
+    <div class="sim-notice">
+        <h3>Szimulált Környezet</h3>
+        <p>Ez az oldal azt szimulálja, mintha beírtad volna a jelszót (<code>Ph-159753</code>). <br>
+            A gombok működése itt tesztelhető. A "szerver" válaszokat a Javascript szimulálja.</p>
+    </div>
+
+    <!-- MOCK ADATOK (Amit a PHP generálna) -->
+    <script>
+        var ak_fe_pass = "Ph-159753"; // Szimulált jelszó
+        var akAjax = {
+            url: 'MOCK_URL',
+            nonce: '', // Nincs admin nonce, mivel nem vagyunk WP-ben
+            status_nonce: '',
+            admin_nonce: ''
+        };
+
+        // AJAX MOCKOLÁS
+        jQuery.post = function (url, data, callback) {
+            console.log("POST Kérés:", data);
+            if (data.action === 'ak_fe_delete') {
+                if (data.fe_pass === 'Ph-159753') {
+                    setTimeout(function () {
+                        alert("SZIMULÁCIÓ: Törlés sikeres a szerveren!");
+                        callback({ success: true });
+                    }, 500);
+                } else {
+                    alert("HIBA: Hibás jelszó!");
+                }
+            }
+        };
+
+        jQuery.ajax = function (opts) {
+            console.log("AJAX Kérés:", opts.data);
+            if (opts.data.action === 'ak_update_status') {
+                if (opts.data.fe_pass === 'Ph-159753') {
+                    setTimeout(function () {
+                        console.log("SZIMULÁCIÓ: Státusz váltás sikeres!");
+                        opts.success({ success: true });
+                    }, 500);
+                } else {
+                    alert("HIBA: Hibás jelszó!");
+                }
+            }
+        };
+    </script>
+
+    <!-- TÁBLÁZAT HTML (Másolat a kódból) -->
+    <div class="ak-wrapper" style="max-width:1100px; margin:0 auto">
+        <div class="ak-card" style="max-width:100%; padding:40px;">
+            <h2 style="color:#8b5e3c; margin-bottom:20px; font-family:Georgia, serif;">Ajánlatok Kezelése (Szimuláció)
+            </h2>
+            <div style="overflow-x:auto">
+                <table class="ak-fe-table">
+                    <thead>
+                        <tr>
+                            <th>Dátum</th>
+                            <th>Vendég</th>
+                            <th>Csomag</th>
+                            <th>Státusz</th>
+                            <th style="text-align:right">Műveletek</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- SORMINTA 1 -->
+                        <tr id="ak-row-1">
+                            <td style="font-size:11px; color:#999">01.06 12:00</td>
+                            <td><strong>Teszt Elek</strong><br><small style="color:#888;">teszt@pelda.hu</small></td>
+                            <td>📦 Teszt Csomag</td>
+                            <td>
+                                <div class="status-wrapper">
+                                    <label class="ak-switch">
+                                        <input type="checkbox" class="ak-fe-toggle" data-id="1">
+                                        <span class="ak-slider"></span>
+                                    </label>
+                                    <span class="ak-status-label status-label-uj">Új</span>
+                                </div>
+                            </td>
+                            <td style="text-align:right; white-space:nowrap;">
+                                <button class="ak-fe-delete ak-icon-btn" data-id="1" title="Törlés">🗑️</button>
+                            </td>
+                        </tr>
+                        <!-- SORMINTA 2 -->
+                        <tr id="ak-row-2">
+                            <td style="font-size:11px; color:#999">01.05 10:30</td>
+                            <td><strong>Másik Márton</strong><br><small style="color:#888;">marton@pelda.hu</small></td>
+                            <td>💍 Esküvő</td>
+                            <td>
+                                <div class="status-wrapper">
+                                    <label class="ak-switch">
+                                        <input type="checkbox" class="ak-fe-toggle" data-id="2" checked>
+                                        <span class="ak-slider"></span>
+                                    </label>
+                                    <span class="ak-status-label status-label-feldolgozva">Feldolgozva</span>
+                                </div>
+                            </td>
+                            <td style="text-align:right; white-space:nowrap;">
+                                <button class="ak-fe-delete ak-icon-btn" data-id="2" title="Törlés">🗑️</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- A TE JAVÍTOTT SCRIPTED -->
+    <script src="assets/js/form.js"></script>
+
+</body>
+
+</html>
