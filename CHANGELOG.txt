@@ -1,6 +1,9 @@
 
 Ajánlatkérés Pro – CHANGELOG
 
+= 1.32 =
+- UI: Szép SVG ikon hozzáadása a Kilépés gombhoz
+
 = 1.31 =
 - FEATURE: Frontend Admin Kilépés gomb
 - FEATURE: Automatikus kijelentkezés 10 perc inaktivitás után
