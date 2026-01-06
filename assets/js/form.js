@@ -165,12 +165,12 @@ jQuery(function ($) {
         $('#ak-edit-modal').removeClass('show').fadeOut(200);
     });
 
-    // Bezárás ha a háttérre kattint
-    $(window).on('click', function (e) {
-        if ($(e.target).is('#ak-edit-modal')) {
-            $('#ak-edit-modal').removeClass('show').fadeOut(200);
-        }
-    });
+    // Bezárás ha a háttérre kattint - KIKAPCSOLVA USER KÉRÉSRE (2025-01-06)
+    // $(window).on('click', function (e) {
+    //     if ($(e.target).is('#ak-edit-modal')) {
+    //         $('#ak-edit-modal').removeClass('show').fadeOut(200);
+    //     }
+    // });
 
     // Mentés
     $('#ak-edit-form').on('submit', function (e) {

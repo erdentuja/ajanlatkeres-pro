@@ -1,7 +1,8 @@
 
 Ajánlatkérés Pro – CHANGELOG
 
-= 1.29 =
+= 1.30 =
+- UI: Modal bezárása csak gombbal (háttérre kattintva nem záródik be)
 - FEATURE: Dinamikus Csomagok kezelése az Admin felületen (Beállítások)
 - UI: Szélesebb (2 hasábos) szerkesztő modal
 - FIX: Csomaglista szinkronizáció a frontend és backend között
