@@ -156,7 +156,7 @@ input:checked + .ak-slider { background-color: #dcfce7; border-color: #c3e6cb; }
 input:checked + .ak-slider:before { transform: translateX(20px); background-color: #166534; }
 
 /* Státusz feliratok - SZÍNES HÁTTÉR, NEM BOLD */
-.status-wrapper { display: flex; align-items: center; gap: 10px; }
+.status-wrapper { display: flex; align-items: center; gap: 10px; flex-wrap: nowrap; white-space: nowrap; }
 .ak-status-label { 
     font-size: 10px; 
     text-transform: uppercase; 
