@@ -1,6 +1,9 @@
 
 Ajánlatkérés Pro – CHANGELOG
 
+= 1.33 =
+- UI: Kilépés gomb mérete és stílusa optimalizálva (micro sizing)
+
 = 1.32 =
 - UI: Szép SVG ikon hozzáadása a Kilépés gombhoz
 
