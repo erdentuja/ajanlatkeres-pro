@@ -45,19 +45,21 @@ echo "Simulating Form Submission...\n";
 $admin_emails = ak_get_admin_emails();
 $headers = ['Content-Type: text/html; charset=UTF-8'];
 
+// Prepare replacement arrays
+$search = array_map(function ($key) {
+    return '{{' . $key . '}}';
+}, array_keys($data));
+$replace = array_values($data);
+
 // Admin Email
 $admin_msg = file_get_contents('emails/admin.html');
-foreach ($data as $key => $value) {
-    $admin_msg = str_replace('{{' . $key . '}}', $value, $admin_msg);
-}
+$admin_msg = str_replace($search, $replace, $admin_msg);
 wp_mail($admin_emails, 'Új Foglalási ajánlatkérés - ' . $data['name'], $admin_msg, $headers);
 
 // User Confirmation Email
 if (!empty($data['email'])) {
     $user_msg = file_get_contents('emails/user.html');
-    foreach ($data as $key => $value) {
-        $user_msg = str_replace('{{' . $key . '}}', $value, $user_msg);
-    }
+    $user_msg = str_replace($search, $replace, $user_msg);
     $user_headers = [
         'Content-Type: text/html; charset=UTF-8',
         'From: Pollushof Panzió & Étterem <' . get_option('admin_email') . '>'
